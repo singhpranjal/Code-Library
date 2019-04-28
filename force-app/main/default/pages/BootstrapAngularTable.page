@@ -1,0 +1,89 @@
+<apex:page applyHtmlTag="false" applyBodyTag="false" showHeader="false" sidebar="false" standardStylesheets="false">
+    <html>
+        <head>
+            <title>Search || Bootstrap || Angular Example</title>
+            <meta charset="utf-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1"/>
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+            <apex:remoteObjects >
+               <apex:remoteObjectModel name="Contact" fields="FirstName,LastName" jsShorthand="dbContacts"/>
+            </apex:remoteObjects>
+            <script>
+                var app = angular.module('myApp', []);
+                app.controller('myCtrl', function($scope) {
+                    $scope.sortType     = 'FirstName'; // set the default sort type
+                    $scope.sortReverse  = false;           
+                    $scope.contacts=[];
+                    $scope.searchText='';
+                    $scope.fetchContacts = function() {
+                           var dbCon = new SObjectModel.dbContacts();
+                           dbCon.retrieve({where: {
+                                                    or:{
+                                                         FirstName: {
+                                                                      like: '%'+$scope.searchText+'%' 
+                                                                    },
+                                                         LastName:  {
+                                                                      like: '%'+$scope.searchText+'%' 
+                                                                    }
+                                                       }
+                                                  }, 
+                                           limit: 10
+                                          },
+                                          function(err, records, event){
+                                                   $scope.$apply(function () {
+                                                          if(err) {
+                                                                   alert(err.message);
+                                                          }
+                                        else {
+                                              $scope.contacts.splice(0,$scope.contacts.length);
+                                              records.forEach(function(record) {
+                                                      $scope.contacts.push({"FirstName" :record.get("FirstName"),"LastName":record.get("LastName")});
+                                              });
+                                        }
+                                 });
+                            });
+                     };         
+         });
+        
+                </script>
+        </head>
+        <body>
+            <div class="container" ng-app="myApp" ng-controller="myCtrl" ng-init="fetchContacts()">  
+                <div class="well well-sm">
+                    <h3>Contacts List with serching and sorting feature using Angular JS and Bootstrap</h3>
+                </div><div class="col-sm-4 pull-right"><div class="col-sm-2">
+                            <label for="searchText">Search:</label>
+                </div><div class="col-sm-10">
+                <input class="form-control" type="text" ng-model="searchText" id="searchText" ng-change="fetchContacts()"/>
+                </div></div>
+                
+<table class="table table-bordered table-striped">
+    <thead><tr>
+        <th>
+            <a href="#" ng-click="sortType = 'FirstName'; sortReverse = !sortReverse">
+            FIRST NAME
+            <span ng-show="sortType == 'FirstName' && !sortReverse" class="glyphicon glyphicon-sort-by-attributes"></span>
+            <span ng-show="sortType == 'FirstName' && sortReverse" class="glyphicon glyphicon-sort-by-attributes-alt"></span>    
+            </a>
+        </th>
+        <th>
+            <a href="#" ng-click="sortType = 'LastName'; sortReverse = !sortReverse">
+            LAST NAME
+            <span ng-show="sortType == 'LastName' && !sortReverse" class="glyphicon glyphicon-sort-by-attributes"></span>
+            <span ng-show="sortType == 'LastName' && sortReverse" class="glyphicon glyphicon-sort-by-attributes-alt"></span>    
+            </a>
+        </th></tr></thead>
+    <tbody>
+       
+  <tr ng-repeat="c in contacts | orderBy:sortType:sortReverse">
+    <td>{{ c.FirstName }}</td>
+    <td>{{ c.LastName }}</td>
+  </tr>
+    </tbody>
+            </table></div>
+        </body>
+    </html>
+</apex:page>
