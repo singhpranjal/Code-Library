@@ -1,0 +1,35 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,flexipage:availableForAllPageTypes" controller='communicationController'  access="global" >
+    <aura:attribute name="rtcObject" type="Object" />
+    <aura:attribute name="iceCandidates" type="Object[]" default="[]" />
+    <aura:attribute name="senderId" type="String" default="" />
+    <aura:attribute name="connected" type="Boolean" />
+    <aura:attribute name="sendICECandidateDirectly" type="Boolean" />
+
+    <aura:handler name="messageEvent" event="c:messageReceived" action="{!c.handleReceivedMessage}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+        <c:connectionMessage senderId="{!v.senderId}" aura:id="connectionMessageComp"/>
+        <lightning:card>
+        <div class="slds-grid slds-gutters">
+            <div class="slds-col">
+                <lightning:button variant="brand" label="Initiate Call" onclick="{! c.initiateOffer }" />
+                
+             </div>
+        </div><br/>
+        <div class="slds-grid slds-gutters">
+             <div class="slds-col">
+                Your Video
+                <video id="localVideo" style="width:200px" autoplay="true" muted="muted"></video>
+            </div>
+            <aura:if isTrue="{!v.connected}">
+                <div class="slds-col">
+                    Your Friend's Video
+                    <video id="remoteVideo" autoplay="true" style="display:none"></video>
+                </div>
+            </aura:if> 
+        </div>
+        <br/>
+        <lightning:button variant="brand" label="Mute/Unmute" onclick="{! c.toggleMic }" />
+   </lightning:card>
+   
+</aura:component>

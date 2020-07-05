@@ -1,0 +1,7 @@
+<aura:component>
+    <aura:attribute name="senderId" type="String" default="" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:registerEvent name="messageEvent" type="c:messageReceived"/>
+    <lightning:empApi aura:id="empApi"/>
+</aura:component>
