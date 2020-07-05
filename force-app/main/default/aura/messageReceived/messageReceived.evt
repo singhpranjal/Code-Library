@@ -1,0 +1,4 @@
+<aura:event type="COMPONENT" description="This event will carry the message body">
+    <aura:attribute name="type" type="String"/>
+    <aura:attribute name="objString" type="String"/>
+</aura:event>
